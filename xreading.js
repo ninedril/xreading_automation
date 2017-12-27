@@ -11,7 +11,7 @@ function main(is_first = false) {
 		
 		//main process
 		checkDialog();
-		var current_text = getText();
+		getText();
 
 		//1ページ読むのにかかる時間を指定 25字（含スペース）/秒 画像1枚/15秒
 		var img_count = document.querySelectorAll('div#xContent img').length;
@@ -46,18 +46,28 @@ function checkDialog() {
 	}
 }
 
+function pageNext() {
+	var nbt = document.evaluate('//div[contains(text(), "Next")]', document, null).iterateNext();
+	nbt.click();
+}
+
 function getText() {
-	var new_text = document.getElementById('xContent').innerText.replace(/^\s*|\s*$/g, '');
+	current_text = document.getElementById('xContent').innerText.replace(/^\s*|\s*$/g, '');
 	whole_text = whole_text + new_text;
 	return new_text;
 }
 
 function setTextObserver() {
 	const content_node = document.getElementById('xContent');
-	text_obs = new MutationObserver(records => {
-		records.forEach(record => {
-			record.addedNodes
-		});
+	const text_obs = new MutationObserver(records => {
+		const content_text = content_node.innerText.replace(/^\s*|\s*$/g, '');
+		//IF the content_text is a sentence
+		if (/([A-Z][a-z0-9_]*\s)(\w+\s)*(\w+[.!?])/.test(content_text)) {
+			//IF not still filed in whole_text
+			if ( whole_text.indexOf(content_text) == -1) {
+				whole_text += content_text;
+			}
+		}
 	});
 	text_obs.observe(content_node, { childList: true, subtree: true});
 }
