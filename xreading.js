@@ -52,6 +52,16 @@ function getText() {
 	return new_text;
 }
 
+function setTextObserver() {
+	const content_node = document.getElementById('xContent');
+	text_obs = new MutationObserver(records => {
+		records.forEach(record => {
+			record.addedNodes
+		});
+	});
+	text_obs.observe(content_node, { childList: true, subtree: true});
+}
+
 whole_text = '';
 startScroll('down');
 main(true)
